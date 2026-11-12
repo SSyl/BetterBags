@@ -581,6 +581,14 @@ end
 ---@return integer
 function itemFrame.GetItemContextMatchResult(item)
 	local data = item and (item._itemData or (item.GetItemData and item:GetItemData()) or item.currentData)
+	-- Spell targeting (Feed Pet, enchants) starts and ends without a bag refresh, so the cached
+	-- result is wrong while it lasts and right after it ends. Blizzard fires ItemContextChanged on
+	-- every CURRENT_SPELL_CAST_CHANGED, so with no context involved the cached result is used.
+	local util = _G.ItemButtonUtil
+	local contextActive = util and util.GetItemContext and util.GetItemContext() ~= nil
+	if data and (contextActive or data.itemContextResolvedInContext) then
+		return items:ResolveItemContextMatchResult(data)
+	end
 	if data and data.itemContextMatchResult then
 		return data.itemContextMatchResult
 	end
