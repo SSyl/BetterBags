@@ -299,6 +299,46 @@ describe("Core Init and Enable flow", function()
     assert.spy(shoppingList.Enable).was.called(1)
   end)
 
+  -- The Character panel's choice is read as Blizzard's CharacterFrame shows and hides, on any
+  -- of its tabs, through addon.HookScript so no handler runs once the settings shut down (initialization.md §7).
+  describe("the Character panel", function()
+    local savedFrame, savedOpen, savedClose
+
+    before_each(function()
+      savedFrame = rawget(_G, "CharacterFrame")
+      savedOpen, savedClose = addon.OpenCharacterPanel, addon.CloseCharacterPanel
+    end)
+
+    after_each(function()
+      _G.CharacterFrame = savedFrame
+      addon.OpenCharacterPanel, addon.CloseCharacterPanel = savedOpen, savedClose
+    end)
+
+    it("follows CharacterFrame showing and hiding", function()
+      _G.CharacterFrame = CreateFrame("Frame")
+      local function opened() end
+      local function closed() end
+      addon.OpenCharacterPanel, addon.CloseCharacterPanel = opened, closed
+      local hooked = {}
+      addon.HookScript = function(obj, script, func)
+        if obj == _G.CharacterFrame then
+          hooked[script] = func
+        end
+      end
+      addon:OnInitialize()
+      addon:OnEnable()
+      assert.are.equal(opened, hooked.OnShow)
+      assert.are.equal(closed, hooked.OnHide)
+    end)
+
+    it("enables without a CharacterFrame", function()
+      _G.CharacterFrame = nil
+      addon.HookScript = function(obj, script, func) obj:HookScript(script, func) end
+      addon:OnInitialize()
+      assert.has_no.errors(function() addon:OnEnable() end)
+    end)
+  end)
+
   it("enables the changelog window", function()
     local changelogWindow = addon:GetModule("ChangelogWindow")
     changelogWindow.Enable = spy.new(function() end)

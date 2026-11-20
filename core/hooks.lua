@@ -149,6 +149,33 @@ function addon.CloseInteractionWindow(ctx, _, interactionType)
   events:SendMessageLater(ctx, 'bags/OpenClose')
 end
 
+-- The Character panel (Blizzard's CharacterFrame, on any of its tabs) opens and closes the backpack as the player
+-- chose, saved as "CharacterFrame" beside the interactions. Its window is no interaction:
+-- nothing dims for it, so it sends no recalculation and leaves atInteracting alone. Hooked in addon:OnEnable.
+-- A hide while the panel's own flag is still set is its parent hiding it (a movie hides UIParent), which closes
+-- nothing, and the show that follows opens nothing, as a BetterBags Next panel's hiddenByParent does.
+local characterPanelHiddenByParent = false
+
+---@param ctx Context
+function addon.OpenCharacterPanel(ctx)
+  if characterPanelHiddenByParent then return end
+  if database:GetInteractionBags("CharacterFrame") == "none" then return end
+  debug:Log("Interaction", "OpenCharacterPanel")
+  addon.backpackShouldOpen = true
+  events:SendMessageLater(ctx, 'bags/OpenClose')
+end
+
+---@param ctx Context
+---@param frame Frame CharacterFrame
+function addon.CloseCharacterPanel(ctx, frame)
+  characterPanelHiddenByParent = frame:IsShown()
+  if characterPanelHiddenByParent then return end
+  if database:GetInteractionBags("CharacterFrame") ~= "openClose" then return end
+  debug:Log("Interaction", "CloseCharacterPanel")
+  addon.backpackShouldClose = true
+  events:SendMessageLater(ctx, 'bags/OpenClose')
+end
+
 ---@param ctx Context
 ---@param interactingFrame? Frame
 function addon:ToggleAllBags(ctx, interactingFrame)

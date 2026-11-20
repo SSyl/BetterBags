@@ -438,6 +438,7 @@ function content:Init()
         { setting = 'interactionScrapper', hidden = function() return not (addon.isRetail and not addon.isForever) end },
         { setting = 'interactionItemUpgrade',
           hidden = function() return not ((addon.isRetail and not addon.isForever) or addon.isMists) end },
+        { setting = 'interactionCharacter' },
       } },
       -- Only the classic bags' search box makes a category on Enter (frames/search.lua).
       { title = L:G("Search"), rows = { { setting = 'inBagSearch' }, { setting = 'enterToMakeCategory', design = "classic" } } },

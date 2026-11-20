@@ -437,7 +437,7 @@ describe("NextSettingsContent", function()
           "animateItemMovement [classic]" } },
         { "General", "Interactions", { "interactionTrade", "interactionBank", "interactionWarbank", "interactionVendor",
           "interactionMail", "interactionAuctionHouse", "interactionGuildBank", "interactionVoidStorage",
-          "interactionScrapper", "interactionItemUpgrade" } },
+          "interactionScrapper", "interactionItemUpgrade", "interactionCharacter" } },
         { "General", "Search", { "inBagSearch", "enterToMakeCategory [classic]" } },
         { "General", "Items", { "upgradeProvider", "newItemDuration", "categorySell" } },
         { "General", "What's New", { "changelogOnLogin" } },
@@ -447,7 +447,7 @@ describe("NextSettingsContent", function()
     -- Only the interactions the player's client has (interaction-bags.md): the Warband bank where there is one, the
     -- guild bank where there is one, Void Storage on Cataclysm and Mists Classic (patch 4.3.0 to 11.2.0 on retail),
     -- the Scrapper on retail (8.0.1), Item Upgrade on retail and Mists Classic (Blizzard_ItemUpgradeUI's game types).
-    -- WoW: Forever runs retail's code in Vanilla's world (camelot-forever.md).
+    -- WoW: Forever runs retail's code in Vanilla's world (camelot-forever.md). The Character panel is on every client.
     it("lists only the interactions the player's client has", function()
       local section
       for _, s in ipairs(pages:Sections(pages:Get("general").tabs[1])) do
@@ -469,16 +469,16 @@ describe("NextSettingsContent", function()
         return out
       end
       assert.are.same({ "Trade", "Bank", "Warbank", "Vendor", "Mail", "AuctionHouse", "GuildBank", "Scrapper",
-        "ItemUpgrade" }, listed({ isRetail = true, hasWarbank = true, hasGuildBank = true }), "retail")
-      assert.are.same({ "Trade", "Bank", "Vendor", "Mail", "AuctionHouse" },
+        "ItemUpgrade", "Character" }, listed({ isRetail = true, hasWarbank = true, hasGuildBank = true }), "retail")
+      assert.are.same({ "Trade", "Bank", "Vendor", "Mail", "AuctionHouse", "Character" },
         listed({ isRetail = true, isForever = true }), "WoW: Forever")
-      assert.are.same({ "Trade", "Bank", "Vendor", "Mail", "AuctionHouse", "GuildBank", "VoidStorage", "ItemUpgrade" },
+      assert.are.same({ "Trade", "Bank", "Vendor", "Mail", "AuctionHouse", "GuildBank", "VoidStorage", "ItemUpgrade", "Character" },
         listed({ isMists = true, hasGuildBank = true }), "Mists Classic")
-      assert.are.same({ "Trade", "Bank", "Vendor", "Mail", "AuctionHouse", "GuildBank", "VoidStorage" },
+      assert.are.same({ "Trade", "Bank", "Vendor", "Mail", "AuctionHouse", "GuildBank", "VoidStorage", "Character" },
         listed({ isCata = true, hasGuildBank = true }), "Cataclysm Classic")
-      assert.are.same({ "Trade", "Bank", "Vendor", "Mail", "AuctionHouse", "GuildBank" },
+      assert.are.same({ "Trade", "Bank", "Vendor", "Mail", "AuctionHouse", "GuildBank", "Character" },
         listed({ isBCC = true, hasGuildBank = true }), "TBC Classic")
-      assert.are.same({ "Trade", "Bank", "Vendor", "Mail", "AuctionHouse" }, listed({ isClassic = true }), "Classic Era")
+      assert.are.same({ "Trade", "Bank", "Vendor", "Mail", "AuctionHouse", "Character" }, listed({ isClassic = true }), "Classic Era")
     end)
 
     -- Asked: "all the enable/disable toggles in general need to move to a general tab in each respective bag menu", and
@@ -652,14 +652,14 @@ describe("NextSettingsContent", function()
           end
         end
       end
-      -- The general pages' 41 (the ten Interactions the latest, interaction-bags.md; Enable QuickFind Integration, #1262;
+      -- The general pages' 42 (Character Panel the latest, after the ten Interactions, interaction-bags.md; Enable QuickFind Integration, #1262;
       -- Enable Bank Bags, Enable Vendor Window and Enable Guild Bank Window moved to their bags, and the Size tab's four to
       -- every bag), the Currencies page's 10 (currency.md §6), the Food & Drink page's 7 (food-drink.md §5), each bag's 43
       -- (Then By and And Then By the latest, #108; Hide Empty Groups before them, #1321; Gap Between Sections before it,
       -- next-columns.md §7c; its Size tab's four before that, Show Keystone Level before them, #202), the bank's and the
       -- guild bank's switch on their General tabs, the bank's Include Tradeable Reagents beside its switch (#750,
       -- warbank-deposit.md), and the vendor's 5 (its switch and its Size tab).
-      assert.are.equal(41 + 10 + 7 + 3 * 43 + 2 + 1 + 5, named)
+      assert.are.equal(42 + 10 + 7 + 3 * 43 + 2 + 1 + 5, named)
     end)
 
     -- The Food & Drink bar's options (food-drink.md §5): a page of their own after Currencies, BetterBags Next only.

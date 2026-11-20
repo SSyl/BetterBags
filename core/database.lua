@@ -236,9 +236,10 @@ local function interactionName(name)
   end
 end
 
--- GetInteractionBags returns what the backpack does at an interaction, by its name in Enum.PlayerInteractionType
--- (interaction-bags.md): "openClose" (it opens with the interaction's window and closes with it), "open" (it opens,
--- and stays open after) or "none" (it is left as it is). Opened and closed at every interaction until told otherwise.
+-- GetInteractionBags returns what the backpack does at an interaction, by its name in Enum.PlayerInteractionType,
+-- or with the Character panel, "CharacterFrame" (interaction-bags.md): "openClose" (it opens with the interaction's
+-- window and closes with it), "open" (it opens, and stays open after) or "none" (it is left as it is). Opened and
+-- closed at every interaction until told otherwise, and left alone with the Character panel.
 ---@param name string
 ---@return InteractionBags
 function DB:GetInteractionBags(name)
