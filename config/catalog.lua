@@ -469,6 +469,8 @@ interactionOption('interactionScrapper', 'ScrappingMachine', 'Scrapper', 'you us
   { 'interaction', 'open', 'close', 'scrapper', 'scrapping machine' })
 interactionOption('interactionItemUpgrade', 'ItemUpgrade', 'Item Upgrade', 'you upgrade an item',
   { 'interaction', 'open', 'close', 'item upgrade', 'upgrade' })
+interactionOption('interactionCharacter', 'CharacterFrame', 'Character Panel', 'you open your Character panel',
+  { 'interaction', 'open', 'close', 'character', 'character panel', 'paper doll', 'gear', 'equipment' })
 
 --[[
 -- Each bag

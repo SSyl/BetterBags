@@ -459,6 +459,11 @@ function addon:OnEnable()
 
   events:RegisterEvent('PLAYER_INTERACTION_MANAGER_FRAME_SHOW', self.OpenInteractionWindow)
   events:RegisterEvent('PLAYER_INTERACTION_MANAGER_FRAME_HIDE', self.CloseInteractionWindow)
+  -- What the backpack does with the Character panel (core/hooks.lua).
+  if CharacterFrame then
+    addon.HookScript(CharacterFrame, "OnShow", self.OpenCharacterPanel)
+    addon.HookScript(CharacterFrame, "OnHide", self.CloseCharacterPanel)
+  end
 
   events:RegisterMessage('items/RefreshBackpack/Done', function(ctx, slotInfo)
     ---@cast slotInfo +SlotInfo

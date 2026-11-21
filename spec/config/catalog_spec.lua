@@ -635,6 +635,7 @@ describe("The settings catalog", function()
       interactionGuildBank = { "Guild Bank", "GuildBanker" },
       interactionVoidStorage = { "Void Storage", "VoidStorageBanker" },
       interactionScrapper = { "Scrapper", "ScrappingMachine" }, interactionItemUpgrade = { "Item Upgrade", "ItemUpgrade" },
+      interactionCharacter = { "Character Panel", "CharacterFrame" },
     }
     for id, want in pairs(interactions) do
       local name = want[2]

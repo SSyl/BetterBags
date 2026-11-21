@@ -2,7 +2,8 @@
 -- .claude/rules/interaction-bags.md). The player picks, for each interaction BetterBags follows, whether its
 -- window opens the backpack and closes it again (Open and Close, the default: what it always did), only opens
 -- it (Open Only), or leaves it as it is (Leave Alone). Asked: #471 ("a toggle added to turn off bags closing
--- when leaving an NPC") and #755 (no auto open and no auto close on some interactions, trade among them).
+-- when leaving an NPC") and #755 (no auto open and no auto close on some interactions, trade among them). The
+-- Character panel takes the same choices, left alone by default.
 
 local addon = LibStub("AceAddon-3.0"):GetAddon("BetterBags")
 
@@ -41,6 +42,7 @@ describe("what the backpack does at an interaction", function()
     for _, name in ipairs(NAMES) do
       choices[name] = "openClose"
     end
+    choices.CharacterFrame = "none"
     StubBetterBagsModule("Database").GetInteractionBags = function(_, name)
       assert.is_not_nil(choices[name], "asked about " .. tostring(name))
       return choices[name]
@@ -263,6 +265,138 @@ describe("what the backpack does at an interaction", function()
         assert.is_true(handOver("MailInfo", "Merchant", closeFirst))
       end)
     end
+  end)
+
+  -- The Character panel (CharacterFrame, on any of its tabs) takes the same three choices, saved as "CharacterFrame",
+  -- left alone until the player picks otherwise. Its window is no interaction: nothing in the
+  -- bags dims for it, so it sends no recalculation and leaves atInteracting as it is.
+  describe("the Character panel", function()
+    -- Stands in for CharacterFrame, whose own shown flag stays set when only its parent hid it (a movie hides UIParent).
+    local panel
+
+    before_each(function()
+      panel = { shown = false }
+      function panel:IsShown() return self.shown end
+    end)
+
+    local function showPanel()
+      panel.shown = true
+      addon.OpenCharacterPanel(nil, panel)
+      run()
+    end
+
+    local function hidePanel()
+      panel.shown = false
+      addon.CloseCharacterPanel(nil, panel)
+      run()
+    end
+
+    -- The panel's OnHide and OnShow as its parent hides and shows it again, its own flag still set.
+    local function parentHidesAndShows()
+      addon.CloseCharacterPanel(nil, panel)
+      run()
+      addon.OpenCharacterPanel(nil, panel)
+      run()
+    end
+
+    it("leaves the backpack alone until told otherwise", function()
+      panel.shown = true
+      addon.OpenCharacterPanel(nil, panel)
+      assert.are.same({}, later, "nothing sent as it shows")
+      assert.is_false(addon.backpackShouldOpen)
+      run()
+      assert.is_false(shown, "not opened")
+      shown = true
+      panel.shown = false
+      addon.CloseCharacterPanel(nil, panel)
+      assert.are.same({}, later, "nothing sent as it hides")
+      assert.is_false(addon.backpackShouldClose)
+      run()
+      assert.is_true(shown, "not closed")
+    end)
+
+    it("opens the backpack with the panel and closes it with it, set to Open and Close", function()
+      choices.CharacterFrame = "openClose"
+      showPanel()
+      assert.is_true(shown)
+      hidePanel()
+      assert.is_false(shown)
+    end)
+
+    it("closes the backpack the player opened first, set to Open and Close, as every interaction does", function()
+      choices.CharacterFrame = "openClose"
+      shown = true
+      showPanel()
+      hidePanel()
+      assert.is_false(shown)
+    end)
+
+    it("opens the backpack, and leaves it open after, set to Open Only", function()
+      choices.CharacterFrame = "open"
+      showPanel()
+      assert.is_true(shown)
+      hidePanel()
+      assert.is_true(shown, "still open")
+      assert.is_false(addon.backpackShouldClose)
+    end)
+
+    it("reads the choice as the panel shows and again as it hides", function()
+      choices.CharacterFrame = "openClose"
+      showPanel()
+      choices.CharacterFrame = "open"
+      hidePanel()
+      assert.is_true(shown, "changed to Open Only while it showed")
+    end)
+
+    it("sends no recalculation and leaves the interaction state as it is", function()
+      choices.CharacterFrame = "openClose"
+      addon.atInteracting = false
+      showPanel()
+      hidePanel()
+      assert.are.same({}, rederives())
+      assert.is_false(addon.atInteracting)
+    end)
+
+    -- What a BetterBags Next panel does when only a parent hid it (panelProto:OnHidden, hiddenByParent).
+    it("neither closes nor opens the backpack when only the panel's parent hides and shows it", function()
+      choices.CharacterFrame = "openClose"
+      showPanel()
+      assert.is_true(shown)
+      parentHidesAndShows()
+      assert.is_true(shown, "not closed by the parent's hide")
+      shown = false
+      parentHidesAndShows()
+      assert.is_false(shown, "a backpack the player closed is not opened again")
+    end)
+
+    it("closes the backpack at the panel's own close after its parent showed it again", function()
+      choices.CharacterFrame = "openClose"
+      showPanel()
+      parentHidesAndShows()
+      hidePanel()
+      assert.is_false(shown)
+      showPanel()
+      assert.is_true(shown, "and opens it at the next open")
+    end)
+
+    it("does not open the backpack again after its parent showed it, set to Open Only", function()
+      choices.CharacterFrame = "open"
+      showPanel()
+      shown = false
+      parentHidesAndShows()
+      assert.is_false(shown)
+    end)
+
+    it("opens the backpack recalculated for a vendor the player is at", function()
+      choices.CharacterFrame = "openClose"
+      choices.Merchant = "none"
+      open("Merchant")
+      sent = {}
+      showPanel()
+      assert.is_true(shown)
+      assert.are.same({ RECALCULATION }, rederives())
+      assert.is_true(addon.atInteracting, "still at the vendor")
+    end)
   end)
 
   it("asks nothing about an interaction it does not follow", function()

@@ -170,13 +170,15 @@ describe("Constants Module Offsets", function()
   end)
 
   -- Asked (#471): "we keep current behavior as the default". Every interaction opens the backpack and closes it
-  -- again until the player picks otherwise (interaction-bags.md).
-  it("opens and closes the backpack at every interaction by default", function()
+  -- again until the player picks otherwise (interaction-bags.md). The Character panel leaves it alone, as it always
+  -- did.
+  it("opens and closes the backpack at every interaction by default, and leaves it alone with the Character panel", function()
     loadfile("core/constants.lua")("BetterBags")
     local const = addon:GetModule("Constants")
     assert.are.same({ TradePartner = "openClose", Banker = "openClose", AccountBanker = "openClose",
       Merchant = "openClose", MailInfo = "openClose", Auctioneer = "openClose", GuildBanker = "openClose",
-      VoidStorageBanker = "openClose", ScrappingMachine = "openClose", ItemUpgrade = "openClose" },
+      VoidStorageBanker = "openClose", ScrappingMachine = "openClose", ItemUpgrade = "openClose",
+      CharacterFrame = "none" },
       const.DATABASE_DEFAULTS.profile.interactionBags)
   end)
 

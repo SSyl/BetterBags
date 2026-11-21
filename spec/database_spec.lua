@@ -105,7 +105,8 @@ const.DATABASE_DEFAULTS = {
     clampBagsToScreen = false,
     interactionBags = { TradePartner = "openClose", Banker = "openClose", AccountBanker = "openClose",
       Merchant = "openClose", MailInfo = "openClose", Auctioneer = "openClose", GuildBanker = "openClose",
-      VoidStorageBanker = "openClose", ScrappingMachine = "openClose", ItemUpgrade = "openClose" },
+      VoidStorageBanker = "openClose", ScrappingMachine = "openClose", ItemUpgrade = "openClose",
+      CharacterFrame = "none" },
     nextEnabled = false,
     nextVendorEnabled = true,
     nextGuildBankEnabled = true,
@@ -710,6 +711,10 @@ describe("Database", function()
       assert.are.equal("none", DB:GetInteractionBags("Merchant"))
       DB:SetInteractionBags("Merchant", "openClose")
       assert.are.equal("openClose", DB:GetInteractionBags("Merchant"))
+      -- The Character panel leaves it alone until told.
+      assert.are.equal("none", DB:GetInteractionBags("CharacterFrame"))
+      DB:SetInteractionBags("CharacterFrame", "openClose")
+      assert.are.equal("openClose", DB:GetInteractionBags("CharacterFrame"))
       assert.has_error(function() DB:GetInteractionBags("Innkeeper") end)
       assert.has_error(function() DB:SetInteractionBags("Innkeeper", "open") end)
       assert.has_error(function() DB:SetInteractionBags("Merchant", "close") end)
