@@ -864,7 +864,7 @@ articles:Define({
   },
   settings = { "interactionTrade", "interactionBank", "interactionWarbank", "interactionVendor", "interactionMail",
     "interactionAuctionHouse", "interactionGuildBank", "interactionVoidStorage", "interactionScrapper",
-    "interactionItemUpgrade" },
+    "interactionItemUpgrade", "interactionCharacter" },
   related = { "auto-sell", "bank-basics" },
   body = {
     { heading = L:G("Behavior Choices") },
@@ -875,6 +875,7 @@ articles:Define({
       L:G("Leave Alone leaves your Backpack as it is when the interaction window opens and closes; if your Backpack is already open, BetterBags still updates item dimming and stack unmerging during the visit and clears those updates afterward."),
     } },
     { text = L:G("Pressing Escape still closes your Backpack regardless of which choice is set. In BetterBags Next, a companion window chained to the right side of the Backpack opens immediately from its own edge instead of waiting for the Backpack when all of its interactions are set to Leave Alone.") },
+    { text = L:G("Character Panel takes the same choices for your Character panel, on any of its tabs, and is set to Leave Alone until you choose otherwise. On WoW: Forever, the gamepad radial menu's Character entry still opens your Backpack whichever choice is set, as it does with Blizzard's own bags.") },
     { heading = L:G("Available Windows") },
     { text = L:G("Each setting in the Interactions section is shown only on game clients that include that window.") },
     { list = {
@@ -884,6 +885,7 @@ articles:Define({
       L:G("Void Storage appears only on Cataclysm Classic and Mists of Pandaria Classic."),
       L:G("Scrapper appears only on Retail, excluding WoW: Forever."),
       L:G("Item Upgrade appears only on Retail (excluding WoW: Forever) and Mists of Pandaria Classic."),
+      L:G("Character Panel appears on every game client."),
     } },
     { setting = "interactionTrade" },
     { setting = "interactionBank" },
